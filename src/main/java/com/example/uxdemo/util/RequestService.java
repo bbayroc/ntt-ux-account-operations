@@ -8,22 +8,22 @@ import java.util.List;
 
 public interface RequestService {
 
-        @GET("/Products/Idaccounts/{idaccount}")
+        @GET("/product/Products/Idaccounts/{idaccount}")
         Call<ProductResponse> prodrequest(@Path("idaccount") String idaccount);
 
-        @GET("/Personal/{dni}")
+        @GET("/personal/Personal/{dni}")
         Call<PersonalResponse> persrequest(@Path("dni") String dni);
 
-        @GET("/Enterprises/{dni}")
+        @GET("/enterprise/Enterprises/{dni}")
         Call<EnterpriseResponse> enterequest(@Path("dni") String dni);
 
-        @GET("/Transactions/{idaccount}")
+        @GET("/transaction/Transactions/{idaccount}")
         Call<List<TransactionResponse>> tranrequest(@Path("idaccount") String idaccount);
 
-        @POST("/Transactions")
+        @POST("/transaction/Transactions")
         Call<TransactionResponse> trancreate(@Body TransactionRequest transactionRequest);
 
-        @PATCH("/Products/{idaccount}")
+        @PATCH("/product/Products/{idaccount}")
         Call<ProductResponse> produpdate(@Path("idaccount") String idaccount, @Body BalanceUpdate balanceUpdate);
 
 

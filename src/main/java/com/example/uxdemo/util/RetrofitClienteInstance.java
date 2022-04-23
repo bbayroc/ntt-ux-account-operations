@@ -11,12 +11,12 @@ public class RetrofitClienteInstance {
     private static Retrofit retrofit2;
     private static Retrofit retrofit3;
     private static Retrofit retrofit4;
-    private static String TRANSACTION = "Http://localhost:8081";
-    private static String PERSONAL = "Http://localhost:8082";
+    private static String TRANSACTION = "Http://localhost:8040";
+    private static String PERSONAL = "Http://localhost:8040";
 
-    private static String ENTERPRISE = "Http://localhost:8083";
+    private static String ENTERPRISE = "Http://localhost:8040";
 
-    private static String PRODUCT = "Http://localhost:8084";
+    private static String PRODUCT = "Http://localhost:8040";
 
     public static Retrofit getRetrofitTransaction() {
 
