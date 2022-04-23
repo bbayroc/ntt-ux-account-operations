@@ -93,7 +93,7 @@ public class ServiceList {
 
         ProductResponse productResponse = call7.execute().body();
 
-        if (productResponse.getMovementlimit() > 0 && (productResponse.getUniquedayofmovement() == 0) || productResponse.getUniquedayofmovement() == LocalDateTime.now().getDayOfMonth()) {
+        if (productResponse.getMovementlimit() > 0) {
 
             List<TransactionResponse> transactions = getTransaction(idaccount);
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
@@ -102,7 +102,7 @@ public class ServiceList {
                     .filter((c) -> c.equals(LocalDateTime.now().getMonth()))
                     .count();
 
-            return (count >= productResponse.getMovementlimit());
+            return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) && productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());
 
         }
 

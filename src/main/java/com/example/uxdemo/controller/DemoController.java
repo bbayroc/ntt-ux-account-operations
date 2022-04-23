@@ -47,23 +47,13 @@ public class DemoController {
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
-        if (productResponse.getMovementlimit() > 0 && (productResponse.getUniquedayofmovement() == 0) || productResponse.getUniquedayofmovement() == LocalDateTime.now().getDayOfMonth()) {
 
-            List<TransactionResponse> transactions = service.getTransaction(productResponse.getIdaccount());
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            long count = transactions.stream()
-                    .map(c -> LocalDateTime.parse(c.getCreated(), formatter).toLocalDate().getMonth())
-                    .filter((c) -> c.equals(LocalDateTime.now().getMonth()))
-                    .count();
-            if (count >= productResponse.getMovementlimit())
-                return null;
-        } else
             //Valida la cuenta y que los retiros sean numeros negativos
             if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0))
                 return null;
             else
                 //Valida que el retiro no sea mayor al balance
-                if ((productResponse.getBalance() + productRequest.getAmount()) < 0) {
+                if ((productResponse.getBalance() + productRequest.getAmount()) < 0 || service.limitValidator(idaccount)) {
                     return null;
                 } else
 
