@@ -47,7 +47,7 @@ public class DemoController {
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
-        if (productResponse.getMovementlimit() > 0) {
+        if (productResponse.getMovementlimit() > 0 && (productResponse.getUniquedayofmovement() == 0) || productResponse.getUniquedayofmovement() == LocalDateTime.now().getDayOfMonth()) {
 
             List<TransactionResponse> transactions = service.getTransaction(productResponse.getIdaccount());
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
