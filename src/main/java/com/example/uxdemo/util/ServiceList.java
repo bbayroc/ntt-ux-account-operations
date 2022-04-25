@@ -109,5 +109,15 @@ public class ServiceList {
         else return false;
     }
 
+    public ProductResponse accountValidator(String idaccount) throws IOException {
+
+        RequestService login8 = RetrofitClienteInstance.getRetrofitProduct().create(RequestService.class);
+
+        Call<ProductResponse> call8 = login8.prodrequest(idaccount);
+
+            return call8.execute().body();
+
+    }
+
 }
 
