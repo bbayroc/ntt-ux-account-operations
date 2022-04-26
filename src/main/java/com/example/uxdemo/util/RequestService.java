@@ -3,7 +3,6 @@ package com.example.uxdemo.util;
 import com.example.uxdemo.entity.*;
 import retrofit2.Call;
 import retrofit2.http.*;
-
 import java.util.List;
 
 public interface RequestService {
@@ -23,16 +22,13 @@ public interface RequestService {
         @POST("/transaction/Transactions")
         Call<TransactionResponse> trancreate(@Body TransactionRequest transactionRequest);
 
-        @PATCH("/product/Products/{idaccount}")
+        @PATCH("/product/Products/Balance/{idaccount}")
         Call<ProductResponse> produpdate(@Path("idaccount") String idaccount, @Body BalanceUpdate balanceUpdate);
 
+        @PATCH("/card/Cards/{idaccount}")
+        Call<CardResponse> cardupdate(@Path("idaccount") String idaccount, @Body BalanceUpdate balanceUpdate);
 
-/*
+        @GET("/card/Cards/Idcards/{idcard}")
+        Call<CardResponse> cardrequest(@Path("idcard") String idcard);
 
-        @POST("/BlackList/{dni}")
-        Call<BlackListResponse> blrequest2(@Path("dni") String dni);
-
-        @GET("/BlackList/{dni}")
-        Call<BlackListResponse> blrequest(@Path("dni") String dni);
-*/
 }

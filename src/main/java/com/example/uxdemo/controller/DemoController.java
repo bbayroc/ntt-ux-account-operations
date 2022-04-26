@@ -1,24 +1,22 @@
 package com.example.uxdemo.controller;
 
 import com.example.uxdemo.entity.*;
+import com.example.uxdemo.util.ServiceCardList;
 import com.example.uxdemo.util.ServiceList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 @RestController
 public class DemoController {
-
-
     @Autowired
     ServiceList service;
 
+    @Autowired
+    ServiceCardList service2;
     @GetMapping("/Balance/{dni}")
     public BalanceResponse getBalance(@PathVariable("dni") String dni, @RequestBody ProductRequest productRequest) throws IOException {
 
@@ -47,7 +45,6 @@ public class DemoController {
         ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
-
 
             //Valida la cuenta y que los retiros sean numeros negativos
             if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0))
@@ -116,7 +113,35 @@ public class DemoController {
                 return service.postTransaction(productRequest, idaccount);
 
             } else return null;
-
-
     }
+
+    @RequestMapping("/Transfer/Cards/{idaccount}")
+    public TransactionResponse postTransfer2(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
+
+        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        CardResponse cardResponse = service2.accountValidator(productRequest.getAccounttransfer());
+
+        BalanceUpdate balanceUpdate = new BalanceUpdate();
+        balanceUpdate.setBalance(productRequest.getAmount());
+
+        //Valida que la operacion se pueda realizar
+        if (productResponse == null || (productRequest.getAmount()) < 0 || productResponse.getBalance() - productRequest.getAmount() < 0)
+            return null;
+
+            //Valida que se pueda transferir a la cuenta destino
+        else if (cardResponse != null) {
+
+            service2.updateCard(productRequest.getAccounttransfer(), balanceUpdate);
+            service.postTransaction(productRequest, productRequest.getAccounttransfer());
+
+            balanceUpdate.setBalance(-productRequest.getAmount());
+            productRequest.setAmount(-productRequest.getAmount());
+
+            service.updateProduct(idaccount, balanceUpdate);
+
+            return service.postTransaction(productRequest, idaccount);
+
+        } else return null;
+    }
+
 }

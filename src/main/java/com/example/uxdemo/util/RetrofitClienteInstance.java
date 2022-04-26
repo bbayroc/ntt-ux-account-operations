@@ -11,12 +11,13 @@ public class RetrofitClienteInstance {
     private static Retrofit retrofit2;
     private static Retrofit retrofit3;
     private static Retrofit retrofit4;
+    private static Retrofit retrofit5;
     private static String TRANSACTION = "Http://localhost:8040";
     private static String PERSONAL = "Http://localhost:8040";
-
     private static String ENTERPRISE = "Http://localhost:8040";
-
     private static String PRODUCT = "Http://localhost:8040";
+
+    private static String CARD = "Http://localhost:8040";
 
     public static Retrofit getRetrofitTransaction() {
 
@@ -80,6 +81,22 @@ public class RetrofitClienteInstance {
                     .build();
         }
         return retrofit4;
+    }
+
+    public static Retrofit getRetrofitCard() {
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .create();
+
+        if (retrofit5 == null) {
+            retrofit5 = new Retrofit.Builder()
+                    .baseUrl(CARD)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+        return retrofit5;
     }
 
 }

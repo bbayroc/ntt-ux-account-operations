@@ -1,9 +1,6 @@
 package com.example.uxdemo.entity;
 
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 @Data
 public class TransactionResponse {
 

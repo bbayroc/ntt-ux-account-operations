@@ -1,13 +1,6 @@
 package com.example.uxdemo.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-@Getter
-@Setter
-@ToString
 @Data
 public class ProductRequest {
 
@@ -23,4 +16,6 @@ public class ProductRequest {
     private double amount;
     private double appliedcomision;
     private String accounttransfer;
+    private String idcard;
+    private String cardtype;
 }
