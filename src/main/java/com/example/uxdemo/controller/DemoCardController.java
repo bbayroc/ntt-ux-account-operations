@@ -29,6 +29,18 @@ public class DemoCardController {
         return balanceResponse;
     }
 
+    @GetMapping("/Debit/{idcard}")
+    public DebitcardResponse getDebitCard(@PathVariable("idcard") String idcard) throws IOException {
+
+        return service.getdebitcard(idcard);
+    }
+
+    @PatchMapping("/Debit/{idcard}")
+    public DebitcardResponse UpdateDebitCard(@PathVariable String idcard, @RequestBody Account account) throws IOException {
+
+        return service.updatedebitcard(idcard, account);
+    }
+
     @GetMapping("/Transaction/{idcard}")
     public List<TransactionResponse> getTransaction(@PathVariable("idcard") String idcard, @RequestBody CardRequest cardRequest) throws IOException {
 

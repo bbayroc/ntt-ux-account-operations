@@ -4,8 +4,6 @@ import com.example.uxdemo.entity.*;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,6 +87,26 @@ public class ServiceCardList {
         Call<CardResponse> call7 = login7.cardrequest(idcard);
 
             return call7.execute().body();
+
+    }
+
+    public DebitcardResponse getdebitcard(String idcard) throws IOException {
+
+        RequestService login10 = RetrofitClienteInstance.getRetrofitCard().create(RequestService.class);
+
+        Call<DebitcardResponse> call10 = login10.debitcardrequest(idcard);
+
+        return call10.execute().body();
+
+    }
+
+    public DebitcardResponse updatedebitcard(String idcard, Account account) throws IOException {
+
+        RequestService login11 = RetrofitClienteInstance.getRetrofitCard().create(RequestService.class);
+
+        Call<DebitcardResponse> call11 = login11.debitcardupdate(idcard, account);
+
+        return call11.execute().body();
 
     }
 

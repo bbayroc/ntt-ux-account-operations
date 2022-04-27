@@ -31,4 +31,10 @@ public interface RequestService {
         @GET("/card/Cards/Idcards/{idcard}")
         Call<CardResponse> cardrequest(@Path("idcard") String idcard);
 
+        @GET("/card/Debit/Idcards/{idcard}")
+        Call<DebitcardResponse> debitcardrequest(@Path("idcard") String idcard);
+
+        @PATCH("/card/Debit/{idcard}")
+        Call<DebitcardResponse> debitcardupdate(@Path("idcard") String idcard, @Body Account account);
+
 }
