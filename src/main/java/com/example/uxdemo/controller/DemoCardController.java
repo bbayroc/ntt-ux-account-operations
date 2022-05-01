@@ -103,9 +103,9 @@ public class DemoCardController {
 
             List<Account> accounts = debitcardResponse.getAccount().stream().sorted(Comparator.comparing(Account::getAdded)).collect(Collectors.toList());
 
-            for (int i = 0; i < accounts.size(); i++) {
+            for (Account account : accounts) {
                 // String idaccount = accounts.get(i).getIdaccount();
-                productResponse = service2.accountValidator(accounts.get(i).getIdaccount());
+                productResponse = service2.accountValidator(account.getIdaccount());
                 transactionResponse = service2.transactionValidator(productRequest, productResponse);
                 if (transactionResponse != null) {
                     break;

@@ -146,5 +146,16 @@ public class ServiceList {
     }
 
 
+    public YankiResponse yankiValidator(String cellphone) throws IOException {
+
+        RequestService login9 = RetrofitClienteInstance.getRetrofitYanki().create(RequestService.class);
+
+        Call<YankiResponse> call9 = login9.yankirequest(cellphone);
+
+        return call9.execute().body();
+
+    }
+
+
 }
 

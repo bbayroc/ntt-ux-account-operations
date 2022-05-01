@@ -37,4 +37,7 @@ public interface RequestService {
         @PATCH("/card/Debit/{idcard}")
         Call<DebitcardResponse> debitcardupdate(@Path("idcard") String idcard, @Body Account account);
 
+        @GET("/Yanki/{cellphone}")
+        Call<YankiResponse> yankirequest(@Path("cellphone") String cellphone);
+
 }

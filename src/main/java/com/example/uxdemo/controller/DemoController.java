@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -97,7 +98,7 @@ public class DemoController {
     public TransactionResponse postTransfer2(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
         ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
-        CardResponse cardResponse = service2.accountValidator(productRequest.getAccounttransfer());
+        CardResponse cardResponse = service2.cardValidator(productRequest.getAccounttransfer());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
         balanceUpdate.setBalance(productRequest.getAmount());
@@ -120,6 +121,27 @@ public class DemoController {
             return service.postTransaction(productRequest, idaccount);
 
         } else return null;
+    }
+
+    @GetMapping("/Yanki/Cellphone/{cellphone}")
+    public YankiResponse getyanki(@PathVariable("cellphone") String cellphone) throws IOException {
+
+        return service.yankiValidator(cellphone);
+    }
+
+    @RequestMapping("/Yanki/{cellphone}")
+    public TransactionResponse getyankitransaction(@PathVariable("cellphone") String cellphone, @RequestBody ProductRequest productRequest) throws IOException {
+
+        YankiResponse yankiResponse = service.yankiValidator(cellphone);
+        System.out.println(yankiResponse.getDebitcard());
+        DebitcardResponse debitcardResponse = service2.getdebitcard(yankiResponse.getDebitcard());
+        ProductResponse productResponse = service.accountValidator(debitcardResponse.getPrincipalaccount());
+
+        if (Objects.equals(productRequest.getIdclient(), yankiResponse.getIdentification())) {
+
+            return service.transactionValidator(productRequest, productResponse);
+        }
+        else return null;
     }
 
 }

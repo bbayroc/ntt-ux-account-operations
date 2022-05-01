@@ -80,7 +80,7 @@ public class ServiceCardList {
 
     }
 
-    public CardResponse accountValidator(String idcard) throws IOException {
+    public CardResponse cardValidator(String idcard) throws IOException {
 
         RequestService login7 = RetrofitClienteInstance.getRetrofitCard().create(RequestService.class);
 
