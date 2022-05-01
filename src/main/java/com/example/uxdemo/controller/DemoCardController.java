@@ -2,11 +2,14 @@ package com.example.uxdemo.controller;
 
 import com.example.uxdemo.entity.*;
 import com.example.uxdemo.util.ServiceCardList;
+import com.example.uxdemo.util.ServiceList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/Cards")
@@ -15,16 +18,31 @@ public class DemoCardController {
     @Autowired
     ServiceCardList service;
 
+    @Autowired
+    ServiceList service2;
+
     @GetMapping("/Balance/{dni}")
     public BalanceResponse getBalance(@PathVariable("dni") String dni, @RequestBody CardRequest cardRequest) throws IOException {
 
         BalanceResponse balanceResponse = new BalanceResponse();
 
-        CardResponse cardResponse = service.Validator(dni, cardRequest.getIdcard(), cardRequest.getClienttype());
+        if (Objects.equals(cardRequest.getCardtype(), "Credit")) {
 
-        balanceResponse.setBalance(cardResponse.getBalance());
+            CardResponse cardResponse = service.Validator(dni, cardRequest.getIdcard(), cardRequest.getClienttype());
 
-        balanceResponse.setCurrency(cardResponse.getCurrency());
+            balanceResponse.setBalance(cardResponse.getBalance());
+
+            balanceResponse.setCurrency(cardResponse.getCurrency());
+
+        } else if (Objects.equals(cardRequest.getCardtype(), "Debit")) {
+
+            ProductResponse productResponse = service2.Validator(dni, cardRequest.getIdaccount(), cardRequest.getClienttype());
+
+            balanceResponse.setBalance(productResponse.getBalance());
+
+            balanceResponse.setCurrency(productResponse.getCurrency());
+
+        }
 
         return balanceResponse;
     }
@@ -56,20 +74,46 @@ public class DemoCardController {
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
-            //Valida la cuenta y que los retiros sean numeros negativos
-            if (cardResponse == null || (Objects.equals(cardRequest.getTransactiontype(), "Consumo") && cardRequest.getAmount() >= 0) || (Objects.equals(cardRequest.getTransactiontype(), "Pago") && cardRequest.getAmount() <= 0))
+        //Valida la cuenta y que los retiros sean numeros negativos
+        if (cardResponse == null || (Objects.equals(cardRequest.getTransactiontype(), "Consumo") && cardRequest.getAmount() >= 0) || (Objects.equals(cardRequest.getTransactiontype(), "Pago") && cardRequest.getAmount() <= 0))
+            return null;
+        else
+            //Valida que el retiro no sea mayor al balance
+            if ((cardResponse.getBalance() + cardRequest.getAmount()) < 0) {
                 return null;
-            else
-                //Valida que el retiro no sea mayor al balance
-                if ((cardResponse.getBalance() + cardRequest.getAmount()) < 0) {
-                    return null;
-                } else
+            } else
 
-                    balanceUpdate.setBalance(cardRequest.getAmount());
+                balanceUpdate.setBalance(cardRequest.getAmount());
 
         service.updateCard(idcard, balanceUpdate);
 
         return service.postTransaction(cardRequest, idcard);
+    }
+
+    @RequestMapping("/DebitCard/{idcard}")
+    public TransactionResponse postDebitTransaction(@PathVariable("idcard") String idcard, @RequestBody ProductRequest productRequest) throws IOException {
+
+        ProductResponse productResponse = service2.Validator(productRequest.getIdclient(), productRequest.getIdaccount(), productRequest.getClienttype());
+
+        TransactionResponse transactionResponse = service2.transactionValidator(productRequest, productResponse);
+
+        if (transactionResponse == null) {
+
+            DebitcardResponse debitcardResponse = service.getdebitcard(idcard);
+
+            List<Account> accounts = debitcardResponse.getAccount().stream().sorted(Comparator.comparing(Account::getAdded)).collect(Collectors.toList());
+
+            for (int i = 0; i < accounts.size(); i++) {
+                // String idaccount = accounts.get(i).getIdaccount();
+                productResponse = service2.accountValidator(accounts.get(i).getIdaccount());
+                transactionResponse = service2.transactionValidator(productRequest, productResponse);
+                if (transactionResponse != null) {
+                    break;
+                }
+            }
+        }
+
+        return transactionResponse;
     }
 
 }

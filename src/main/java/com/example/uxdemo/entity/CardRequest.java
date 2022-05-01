@@ -13,5 +13,6 @@ public class CardRequest {
     private String currency;
     private String transactiontype;
     private double amount;
-
+    private double appliedcomision;
+    private String idaccount;
 }

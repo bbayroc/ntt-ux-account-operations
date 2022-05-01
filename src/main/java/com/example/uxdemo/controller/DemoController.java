@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -44,28 +43,7 @@ public class DemoController {
 
         ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
 
-        BalanceUpdate balanceUpdate = new BalanceUpdate();
-
-            //Valida la cuenta y que los retiros sean numeros negativos
-            if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0))
-                return null;
-            else
-                //Valida que el retiro no sea mayor al balance
-                if ((productResponse.getBalance() + productRequest.getAmount()) < 0 || (service.limitValidator(idaccount) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype()))) {
-                    return null;
-                } else
-
-                    balanceUpdate.setBalance(productRequest.getAmount());
-
-            if (!Objects.equals(productResponse.getAccounttype(), "Cuenta Corriente") && service.limitValidator(idaccount))    {
-
-                balanceUpdate.setBalance(productRequest.getAmount() - productResponse.getComission());
-                productRequest.setAppliedcomision(-productResponse.getComission());
-            }
-
-        service.updateProduct(idaccount, balanceUpdate);
-
-        return service.postTransaction(productRequest, idaccount);
+        return service.transactionValidator(productRequest, productResponse);
     }
 
     @RequestMapping("/Transfer/{idaccount}")

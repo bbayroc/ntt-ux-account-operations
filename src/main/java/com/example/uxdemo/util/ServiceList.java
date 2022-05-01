@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class ServiceList {
@@ -83,7 +84,6 @@ public class ServiceList {
 
     }
 
-
     public boolean limitValidator(String idaccount) throws IOException {
 
         RequestService login7 = RetrofitClienteInstance.getRetrofitProduct().create(RequestService.class);
@@ -117,6 +117,34 @@ public class ServiceList {
             return call8.execute().body();
 
     }
+
+    public TransactionResponse transactionValidator(ProductRequest productRequest, ProductResponse productResponse) throws IOException {
+
+        BalanceUpdate balanceUpdate = new BalanceUpdate();
+
+        //Valida la cuenta y que los retiros sean numeros negativos
+        if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0))
+            return null;
+        else
+            //Valida que el retiro no sea mayor al balance
+            if ((productResponse.getBalance() + productRequest.getAmount()) < 0 || (limitValidator(productResponse.getIdaccount()) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype()))) {
+                return null;
+            } else
+
+                balanceUpdate.setBalance(productRequest.getAmount());
+
+        if (!Objects.equals(productResponse.getAccounttype(), "Cuenta Corriente") && limitValidator(productResponse.getIdaccount()))    {
+
+            balanceUpdate.setBalance(productRequest.getAmount() - productResponse.getComission());
+            productRequest.setAppliedcomision(-productResponse.getComission());
+        }
+
+        updateProduct(productResponse.getIdaccount(), balanceUpdate);
+
+        return postTransaction(productRequest, productResponse.getIdaccount());
+
+    }
+
 
 }
 
