@@ -1,7 +1,6 @@
 package com.example.uxdemo.model.cards;
 
 import lombok.Data;
-
 import java.util.List;
 
 @Data

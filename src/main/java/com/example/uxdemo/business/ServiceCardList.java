@@ -1,6 +1,6 @@
 package com.example.uxdemo.business;
 
-import com.example.uxdemo.model.*;
+import com.example.uxdemo.model.BalanceUpdate;
 import com.example.uxdemo.model.cards.Account;
 import com.example.uxdemo.model.cards.CardRequest;
 import com.example.uxdemo.model.cards.CardResponse;
@@ -36,7 +36,7 @@ public class ServiceCardList {
     @Autowired
     private TransactionsService transactionsService;
 
-    public CardResponse Validator(String dni, String idcard, String clienttype) throws IOException {
+    public CardResponse validator(String dni, String idcard, String clienttype) throws IOException {
 
         Call<PersonalResponse> call = personsService.persrequest(dni);
         Call<EnterpriseResponse> call2 = enterprisesService.enterequest(dni);
@@ -88,7 +88,7 @@ public class ServiceCardList {
         return call9.execute().body();
     }
 
-    public CardResponse accountValidator(String idcard) throws IOException {
+    public CardResponse cardValidator(String idcard) throws IOException {
 
         Call<CardResponse> call7 = cardsService.cardrequest(idcard);
         return call7.execute().body();

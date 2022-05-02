@@ -37,7 +37,7 @@ public class ServiceList {
     @Autowired
     private ProductsService productsService;
 
-    public ProductResponse Validator(String dni, String idaccount, String clienttype) throws IOException {
+    public ProductResponse validator(String dni, String idaccount, String idclient) throws IOException {
 
         Call<PersonalResponse> call = personsService.persrequest(dni);
         Call<EnterpriseResponse> call2 = enterprisesService.enterequest(dni);
@@ -47,15 +47,16 @@ public class ServiceList {
         PersonalResponse personalResponse = new PersonalResponse();
         EnterpriseResponse enterpriseResponse = new EnterpriseResponse();
 
-        if (Objects.equals(clienttype, "Personal")) {
+        if (Objects.equals(idclient, "Personal")) {
             personalResponse = call.execute().body();
-        }
-        else if (Objects.equals(clienttype, "Enterprise")) {
+        } else if (Objects.equals(idclient, "Enterprise")) {
             enterpriseResponse = call2.execute().body();
         }
 
         if (Objects.equals(enterpriseResponse.getDni(), dni) || Objects.equals(personalResponse.getDni(), dni)) {
+
             productResponse = call3.execute().body();
+
         }
 
         if (Objects.equals(productResponse.getIdclient(), dni) && Objects.equals(idaccount, productResponse.getIdaccount())) {
@@ -70,6 +71,7 @@ public class ServiceList {
 
         Call<List<TransactionResponse>> call4 = transactionsService.tranrequest(idaccount);
         return call4.execute().body();
+
     }
 
     public TransactionResponse postTransaction(ProductRequest productRequest, String idaccount) throws IOException {
@@ -98,9 +100,13 @@ public class ServiceList {
         ProductResponse productResponse = call7.execute().body();
 
         if (productResponse.getMovementlimit() > 0) {
+
             List<TransactionResponse> transactions = getTransaction(idaccount);
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            long count = transactions.stream().map(c -> LocalDateTime.parse(c.getCreated(), formatter).toLocalDate().getMonth()).filter((c) -> c.equals(LocalDateTime.now().getMonth())).count();
+            long count = transactions.stream()
+                    .map(c -> LocalDateTime.parse(c.getCreated(), formatter).toLocalDate().getMonth())
+                    .filter(c -> c.equals(LocalDateTime.now().getMonth()))
+                    .count();
 
             return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) && productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());
 
@@ -141,4 +147,6 @@ public class ServiceList {
 
         return postTransaction(productRequest, productResponse.getIdaccount());
     }
+
+
 }

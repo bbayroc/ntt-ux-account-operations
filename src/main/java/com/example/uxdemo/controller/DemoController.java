@@ -1,12 +1,13 @@
 package com.example.uxdemo.controller;
 
-import com.example.uxdemo.model.*;
-import com.example.uxdemo.business.ServiceCardList;
 import com.example.uxdemo.business.ServiceList;
+import com.example.uxdemo.model.BalanceResponse;
+import com.example.uxdemo.model.BalanceUpdate;
 import com.example.uxdemo.model.cards.CardResponse;
 import com.example.uxdemo.model.products.ProductRequest;
 import com.example.uxdemo.model.products.ProductResponse;
 import com.example.uxdemo.model.transactions.TransactionResponse;
+import com.example.uxdemo.util.ServiceCardList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class DemoController {
 
         BalanceResponse balanceResponse = new BalanceResponse();
 
-        ProductResponse productResponse = service.Validator(dni, productRequest.getIdaccount(), productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(dni, productRequest.getIdaccount(), productRequest.getClienttype());
 
         balanceResponse.setBalance(productResponse.getBalance());
 
@@ -40,7 +41,7 @@ public class DemoController {
     @GetMapping("/transaction/{idaccount}")
     public List<TransactionResponse> getTransaction(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
 
         return service.getTransaction(productResponse.getIdaccount());
     }
@@ -48,7 +49,7 @@ public class DemoController {
     @RequestMapping("/product/{idaccount}")
     public TransactionResponse postTransaction(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
 
         return service.transactionValidator(productRequest, productResponse);
     }
@@ -56,7 +57,7 @@ public class DemoController {
     @RequestMapping("/transfer/{idaccount}")
     public TransactionResponse postTransfer(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
         ProductResponse productResponse2 = service.accountValidator(productRequest.getAccounttransfer());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
@@ -105,8 +106,8 @@ public class DemoController {
     @RequestMapping("/transfer/cards/{idaccount}")
     public TransactionResponse postTransfer2(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
-        CardResponse cardResponse = service2.accountValidator(productRequest.getAccounttransfer());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        CardResponse cardResponse = service2.cardValidator(productRequest.getAccounttransfer());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
         balanceUpdate.setBalance(productRequest.getAmount());

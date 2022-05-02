@@ -1,8 +1,9 @@
 package com.example.uxdemo.controller;
 
-import com.example.uxdemo.model.*;
 import com.example.uxdemo.business.ServiceCardList;
 import com.example.uxdemo.business.ServiceList;
+import com.example.uxdemo.model.BalanceResponse;
+import com.example.uxdemo.model.BalanceUpdate;
 import com.example.uxdemo.model.cards.Account;
 import com.example.uxdemo.model.cards.CardRequest;
 import com.example.uxdemo.model.cards.CardResponse;
@@ -12,6 +13,7 @@ import com.example.uxdemo.model.products.ProductResponse;
 import com.example.uxdemo.model.transactions.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +37,7 @@ public class DemoCardController {
 
         if (Objects.equals(cardRequest.getCardtype(), "Credit")) {
 
-            CardResponse cardResponse = service.Validator(dni, cardRequest.getIdcard(), cardRequest.getClienttype());
+            CardResponse cardResponse = service.validator(dni, cardRequest.getIdcard(), cardRequest.getClienttype());
 
             balanceResponse.setBalance(cardResponse.getBalance());
 
@@ -49,6 +51,7 @@ public class DemoCardController {
             //ProductResponse productResponse = service2.Validator(dni, debitcardResponse.getPrincipalaccount(), cardRequest.getClienttype());
 
             ProductResponse productResponse = service2.accountValidator(debitcardResponse.getPrincipalaccount());
+//            ProductResponse productResponse = service2.validator(dni, cardRequest.getIdaccount(), cardRequest.getClienttype());
 
             balanceResponse.setBalance(productResponse.getBalance());
 
@@ -74,7 +77,7 @@ public class DemoCardController {
     @GetMapping("/transaction/{idcard}")
     public List<TransactionResponse> getTransaction(@PathVariable("idcard") String idcard, @RequestBody CardRequest cardRequest) throws IOException {
 
-        CardResponse cardResponse = service.Validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
+        CardResponse cardResponse = service.validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
 
         return service.getTransaction(cardResponse.getIdcard());
     }
@@ -82,7 +85,7 @@ public class DemoCardController {
     @RequestMapping("/card/{idcard}")
     public TransactionResponse postTransaction(@PathVariable("idcard") String idcard, @RequestBody CardRequest cardRequest) throws IOException {
 
-        CardResponse cardResponse = service.Validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
+        CardResponse cardResponse = service.validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
@@ -107,7 +110,7 @@ public class DemoCardController {
     @RequestMapping("/debitCard/{idcard}")
     public TransactionResponse postDebitTransaction(@PathVariable("idcard") String idcard, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service2.Validator(productRequest.getIdclient(), productRequest.getIdaccount(), productRequest.getClienttype());
+        ProductResponse productResponse = service2.validator(productRequest.getIdclient(), productRequest.getIdaccount(), productRequest.getClienttype());
 
         TransactionResponse transactionResponse = service2.transactionValidator(productRequest, productResponse);
 
@@ -117,16 +120,14 @@ public class DemoCardController {
 
             List<Account> accounts = debitcardResponse.getAccount().stream().sorted(Comparator.comparing(Account::getAdded)).collect(Collectors.toList());
 
-            for (int i = 0; i < accounts.size(); i++) {
-                productResponse = service2.accountValidator(accounts.get(i).getIdaccount());
+            for (Account account : accounts) {
+                productResponse = service2.accountValidator(account.getIdaccount());
                 transactionResponse = service2.transactionValidator(productRequest, productResponse);
                 if (transactionResponse != null) {
                     break;
                 }
             }
         }
-
         return transactionResponse;
     }
-
 }

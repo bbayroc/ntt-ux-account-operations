@@ -1,7 +1,6 @@
 package com.example.uxdemo.model.persons;
 
 import lombok.Data;
-
 @Data
 public class PersonalResponse {
 

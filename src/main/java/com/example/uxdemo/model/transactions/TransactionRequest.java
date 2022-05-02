@@ -1,7 +1,6 @@
 package com.example.uxdemo.model.transactions;
 
 import lombok.Data;
-
 @Data
 public class TransactionRequest {
 
