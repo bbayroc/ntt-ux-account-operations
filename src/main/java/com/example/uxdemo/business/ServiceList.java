@@ -1,8 +1,17 @@
-package com.example.uxdemo.util;
+package com.example.uxdemo.business;
 
-import com.example.uxdemo.entity.*;
+import com.example.uxdemo.model.*;
+import com.example.uxdemo.model.enterprises.EnterpriseResponse;
+import com.example.uxdemo.model.persons.PersonalResponse;
+import com.example.uxdemo.model.products.ProductRequest;
+import com.example.uxdemo.model.products.ProductResponse;
+import com.example.uxdemo.model.transactions.TransactionRequest;
+import com.example.uxdemo.model.transactions.TransactionResponse;
+import com.example.uxdemo.web.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,15 +22,26 @@ import java.util.Set;
 @Service
 public class ServiceList {
 
+    @Autowired
+    private PersonsService personsService;
+
+    @Autowired
+    private EnterprisesService enterprisesService;
+
+    @Autowired
+    private CardsService cardsService;
+
+    @Autowired
+    private TransactionsService transactionsService;
+
+    @Autowired
+    private ProductsService productsService;
+
     public ProductResponse validator(String dni, String idaccount, String idclient) throws IOException {
 
-        RequestService login = RetrofitClienteInstance.getRetrofitPersonal().create(RequestService.class);
-        RequestService login2 = RetrofitClienteInstance.getRetrofitEnterprise().create(RequestService.class);
-        RequestService login3 = RetrofitClienteInstance.getRetrofitProduct().create(RequestService.class);
-
-        Call<PersonalResponse> call = login.persrequest(dni);
-        Call<EnterpriseResponse> call2 = login2.enterequest(dni);
-        Call<ProductResponse> call3 = login3.prodrequest(idaccount);
+        Call<PersonalResponse> call = personsService.persrequest(dni);
+        Call<EnterpriseResponse> call2 = enterprisesService.enterequest(dni);
+        Call<ProductResponse> call3 = productsService.prodrequest(idaccount);
 
         ProductResponse productResponse = new ProductResponse();
         PersonalResponse personalResponse = new PersonalResponse();
@@ -40,19 +60,16 @@ public class ServiceList {
         }
 
         if (Objects.equals(productResponse.getIdclient(), dni) && Objects.equals(idaccount, productResponse.getIdaccount())) {
-
             return productResponse;
-
-        } else return null;
-
+        }
+        else {
+            return null;
+        }
     }
 
     public List<TransactionResponse> getTransaction(String idaccount) throws IOException {
 
-        RequestService login4 = RetrofitClienteInstance.getRetrofitTransaction().create(RequestService.class);
-
-        Call<List<TransactionResponse>> call4 = login4.tranrequest(idaccount);
-
+        Call<List<TransactionResponse>> call4 = transactionsService.tranrequest(idaccount);
         return call4.execute().body();
 
     }
@@ -66,29 +83,19 @@ public class ServiceList {
         transactionRequest.setAmount(productRequest.getAmount());
         transactionRequest.setAppliedcomission(productRequest.getAppliedcomision());
 
-        RequestService login5 = RetrofitClienteInstance.getRetrofitTransaction().create(RequestService.class);
-
-        Call<TransactionResponse> call5 = login5.trancreate(transactionRequest);
-
+        Call<TransactionResponse> call5 = transactionsService.trancreate(transactionRequest);
         return call5.execute().body();
-
     }
 
     public ProductResponse updateProduct(String idaccount, BalanceUpdate balanceUpdate) throws IOException {
 
-        RequestService login6 = RetrofitClienteInstance.getRetrofitProduct().create(RequestService.class);
-
-        Call<ProductResponse> call6 = login6.produpdate(idaccount, balanceUpdate);
-
+        Call<ProductResponse> call6 = productsService.produpdate(idaccount, balanceUpdate);
         return call6.execute().body();
-
     }
 
     public boolean limitValidator(String idaccount) throws IOException {
 
-        RequestService login7 = RetrofitClienteInstance.getRetrofitProduct().create(RequestService.class);
-
-        Call<ProductResponse> call7 = login7.prodrequest(idaccount);
+        Call<ProductResponse> call7 = productsService.prodrequest(idaccount);
 
         ProductResponse productResponse = call7.execute().body();
 
@@ -104,18 +111,15 @@ public class ServiceList {
             return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) && productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());
 
         }
-
-        else return false;
+        else {
+            return false;
+        }
     }
 
     public ProductResponse accountValidator(String idaccount) throws IOException {
 
-        RequestService login8 = RetrofitClienteInstance.getRetrofitProduct().create(RequestService.class);
-
-        Call<ProductResponse> call8 = login8.prodrequest(idaccount);
-
-            return call8.execute().body();
-
+        Call<ProductResponse> call8 = productsService.prodrequest(idaccount);
+        return call8.execute().body();
     }
 
     public TransactionResponse transactionValidator(ProductRequest productRequest, ProductResponse productResponse) throws IOException {
@@ -123,39 +127,26 @@ public class ServiceList {
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
         //Valida la cuenta y que los retiros sean numeros negativos
-        if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0))
+        if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0)) {
             return null;
+        }
         else
             //Valida que el retiro no sea mayor al balance
             if ((productResponse.getBalance() + productRequest.getAmount()) < 0 || (limitValidator(productResponse.getIdaccount()) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype()))) {
                 return null;
-            } else
-
+            }
+            else {
                 balanceUpdate.setBalance(productRequest.getAmount());
+            }
 
-        if (!Objects.equals(productResponse.getAccounttype(), "Cuenta Corriente") && limitValidator(productResponse.getIdaccount()))    {
-
+        if (!Objects.equals(productResponse.getAccounttype(), "Cuenta Corriente") && limitValidator(productResponse.getIdaccount())) {
             balanceUpdate.setBalance(productRequest.getAmount() - productResponse.getComission());
             productRequest.setAppliedcomision(-productResponse.getComission());
         }
-
         updateProduct(productResponse.getIdaccount(), balanceUpdate);
 
         return postTransaction(productRequest, productResponse.getIdaccount());
-
-    }
-
-
-    public YankiResponse yankiValidator(String cellphone) throws IOException {
-
-        RequestService login9 = RetrofitClienteInstance.getRetrofitYanki().create(RequestService.class);
-
-        Call<YankiResponse> call9 = login9.yankirequest(cellphone);
-
-        return call9.execute().body();
-
     }
 
 
 }
-

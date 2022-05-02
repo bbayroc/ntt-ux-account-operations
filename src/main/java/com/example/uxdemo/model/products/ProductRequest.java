@@ -1,6 +1,7 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model.products;
 
 import lombok.Data;
+
 @Data
 public class ProductRequest {
 

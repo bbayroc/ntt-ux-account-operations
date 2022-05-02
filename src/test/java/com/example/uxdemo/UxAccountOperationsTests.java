@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UxDemoApplicationTests {
+class UxAccountOperationsTests {
+
 
     @Test
     void contextLoads() {
-    }
 
+
+    }
 }

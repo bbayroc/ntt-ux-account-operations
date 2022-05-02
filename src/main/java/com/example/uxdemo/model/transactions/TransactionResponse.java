@@ -1,12 +1,14 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model.transactions;
 
 import lombok.Data;
-@Data
-public class TransactionRequest {
 
+@Data
+public class TransactionResponse {
+
+    private long id;
     private String idaccount;
     private String transactiontype;
     private double amount;
+    private String created;
     private double appliedcomission;
-
 }

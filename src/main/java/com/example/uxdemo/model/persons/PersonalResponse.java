@@ -1,8 +1,8 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model.persons;
 
 import lombok.Data;
 @Data
-public class EnterpriseResponse {
+public class PersonalResponse {
 
     private long id;
     private String name;
@@ -10,6 +10,5 @@ public class EnterpriseResponse {
     private String email;
     private String dni;
     private int phone;
-    private String clienttype;
-    private String signer;
+    private String clientype;
 }

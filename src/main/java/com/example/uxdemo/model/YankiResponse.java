@@ -1,6 +1,7 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model;
 
 import lombok.Data;
+
 @Data
 public class YankiResponse {
 
