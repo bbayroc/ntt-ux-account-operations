@@ -43,7 +43,7 @@ public class YankiController {
 
         if (Objects.equals(null, yankiResponse.getDebitcard())) {
 
-            return service.update(identification, yankirequest.getDebitcard());
+            return service.update(identification, yankirequest);
 
         } else return null;
 

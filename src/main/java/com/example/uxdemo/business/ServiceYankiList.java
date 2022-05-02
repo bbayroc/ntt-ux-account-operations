@@ -2,6 +2,7 @@ package com.example.uxdemo.business;
 
 import com.example.uxdemo.model.cards.Account;
 import com.example.uxdemo.model.cards.DebitcardResponse;
+import com.example.uxdemo.model.yanki.YankiRequest;
 import com.example.uxdemo.model.yanki.YankiResponse;
 import com.example.uxdemo.web.YankiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ public class ServiceYankiList {
         return call1.execute().body();
     }
 
-    public YankiResponse update(String identification, String idcard) throws IOException {
+    public YankiResponse update(String identification, YankiRequest yankirequest) throws IOException {
 
-        Call<YankiResponse> call2 = yankiService.yankiupdate(identification, idcard);
+        Call<YankiResponse> call2 = yankiService.yankiupdate(identification, yankirequest);
 
         return call2.execute().body();
     }
