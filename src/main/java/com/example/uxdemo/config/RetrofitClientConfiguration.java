@@ -7,6 +7,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.retrofit.CircuitBreakerCallAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
@@ -18,7 +19,9 @@ import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 @Configuration
 public class RetrofitClientConfiguration {
 
-    private final CircuitBreaker circuitBreakerRest = CircuitBreaker.ofDefaults("demo");
+    @Autowired
+    private CircuitBreaker circuitBreakerRest;
+
     private final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor().setLevel(BODY);
     private final OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(interceptor).build();
     private final Gson gson = new GsonBuilder().setLenient().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -51,7 +54,7 @@ public class RetrofitClientConfiguration {
                 .baseUrl(PERSONAL_URL)
                 .client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(CircuitBreakerCallAdapter.of(circuitBreakerRest))
+                .addCallAdapterFactory(CircuitBreakerCallAdapter.of(circuitBreakerRest, r -> r.code() < 500))
                 .build()
                 .create(PersonsService.class);
     }
