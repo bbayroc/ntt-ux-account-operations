@@ -1,4 +1,4 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model;
 
 import lombok.Data;
 
@@ -6,5 +6,4 @@ import lombok.Data;
 public class BalanceUpdate {
 
     private double balance;
-
 }

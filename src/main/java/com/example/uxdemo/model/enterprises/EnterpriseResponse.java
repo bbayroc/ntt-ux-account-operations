@@ -1,6 +1,7 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model.enterprises;
 
 import lombok.Data;
+
 @Data
 public class EnterpriseResponse {
 

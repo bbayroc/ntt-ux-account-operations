@@ -1,4 +1,4 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model.persons;
 
 import lombok.Data;
 
@@ -12,5 +12,4 @@ public class PersonalResponse {
     private String dni;
     private int phone;
     private String clientype;
-
 }

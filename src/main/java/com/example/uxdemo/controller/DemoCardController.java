@@ -1,10 +1,18 @@
 package com.example.uxdemo.controller;
 
-import com.example.uxdemo.entity.*;
-import com.example.uxdemo.util.ServiceCardList;
-import com.example.uxdemo.util.ServiceList;
+import com.example.uxdemo.model.*;
+import com.example.uxdemo.business.ServiceCardList;
+import com.example.uxdemo.business.ServiceList;
+import com.example.uxdemo.model.cards.Account;
+import com.example.uxdemo.model.cards.CardRequest;
+import com.example.uxdemo.model.cards.CardResponse;
+import com.example.uxdemo.model.cards.DebitcardResponse;
+import com.example.uxdemo.model.products.ProductRequest;
+import com.example.uxdemo.model.products.ProductResponse;
+import com.example.uxdemo.model.transactions.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +20,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/Cards")
+@RequestMapping("/cards")
 public class DemoCardController {
 
     @Autowired
@@ -21,7 +29,7 @@ public class DemoCardController {
     @Autowired
     ServiceList service2;
 
-    @GetMapping("/Balance/{dni}")
+    @GetMapping("/balance/{dni}")
     public BalanceResponse getBalance(@PathVariable("dni") String dni, @RequestBody CardRequest cardRequest) throws IOException {
 
         BalanceResponse balanceResponse = new BalanceResponse();
@@ -34,7 +42,8 @@ public class DemoCardController {
 
             balanceResponse.setCurrency(cardResponse.getCurrency());
 
-        } else if (Objects.equals(cardRequest.getCardtype(), "Debit")) {
+        }
+        else if (Objects.equals(cardRequest.getCardtype(), "Debit")) {
 
             ProductResponse productResponse = service2.Validator(dni, cardRequest.getIdaccount(), cardRequest.getClienttype());
 
@@ -47,19 +56,19 @@ public class DemoCardController {
         return balanceResponse;
     }
 
-    @GetMapping("/Debit/{idcard}")
+    @GetMapping("/debit/{idcard}")
     public DebitcardResponse getDebitCard(@PathVariable("idcard") String idcard) throws IOException {
 
         return service.getdebitcard(idcard);
     }
 
-    @PatchMapping("/Debit/{idcard}")
+    @PatchMapping("/debit/{idcard}")
     public DebitcardResponse UpdateDebitCard(@PathVariable String idcard, @RequestBody Account account) throws IOException {
 
         return service.updatedebitcard(idcard, account);
     }
 
-    @GetMapping("/Transaction/{idcard}")
+    @GetMapping("/transaction/{idcard}")
     public List<TransactionResponse> getTransaction(@PathVariable("idcard") String idcard, @RequestBody CardRequest cardRequest) throws IOException {
 
         CardResponse cardResponse = service.Validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
@@ -67,7 +76,7 @@ public class DemoCardController {
         return service.getTransaction(cardResponse.getIdcard());
     }
 
-    @RequestMapping("/Card/{idcard}")
+    @RequestMapping("/card/{idcard}")
     public TransactionResponse postTransaction(@PathVariable("idcard") String idcard, @RequestBody CardRequest cardRequest) throws IOException {
 
         CardResponse cardResponse = service.Validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
@@ -75,22 +84,24 @@ public class DemoCardController {
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
         //Valida la cuenta y que los retiros sean numeros negativos
-        if (cardResponse == null || (Objects.equals(cardRequest.getTransactiontype(), "Consumo") && cardRequest.getAmount() >= 0) || (Objects.equals(cardRequest.getTransactiontype(), "Pago") && cardRequest.getAmount() <= 0))
+        if (cardResponse == null || (Objects.equals(cardRequest.getTransactiontype(), "Consumo") && cardRequest.getAmount() >= 0) || (Objects.equals(cardRequest.getTransactiontype(), "Pago") && cardRequest.getAmount() <= 0)) {
             return null;
+        }
         else
             //Valida que el retiro no sea mayor al balance
             if ((cardResponse.getBalance() + cardRequest.getAmount()) < 0) {
                 return null;
-            } else
-
+            }
+            else {
                 balanceUpdate.setBalance(cardRequest.getAmount());
+            }
 
         service.updateCard(idcard, balanceUpdate);
 
         return service.postTransaction(cardRequest, idcard);
     }
 
-    @RequestMapping("/DebitCard/{idcard}")
+    @RequestMapping("/debitCard/{idcard}")
     public TransactionResponse postDebitTransaction(@PathVariable("idcard") String idcard, @RequestBody ProductRequest productRequest) throws IOException {
 
         ProductResponse productResponse = service2.Validator(productRequest.getIdclient(), productRequest.getIdaccount(), productRequest.getClienttype());

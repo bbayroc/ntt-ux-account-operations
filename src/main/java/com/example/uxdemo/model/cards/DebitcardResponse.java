@@ -1,4 +1,4 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model.cards;
 
 import lombok.Data;
 

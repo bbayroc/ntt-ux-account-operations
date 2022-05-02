@@ -1,4 +1,4 @@
-package com.example.uxdemo.entity;
+package com.example.uxdemo.model.transactions;
 
 import lombok.Data;
 
@@ -9,5 +9,4 @@ public class TransactionRequest {
     private String transactiontype;
     private double amount;
     private double appliedcomission;
-
 }
