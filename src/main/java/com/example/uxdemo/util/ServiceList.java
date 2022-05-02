@@ -13,7 +13,7 @@ import java.util.Set;
 @Service
 public class ServiceList {
 
-    public ProductResponse Validator(String dni, String idaccount, String idclient) throws IOException {
+    public ProductResponse validator(String dni, String idaccount, String idclient) throws IOException {
 
         RequestService login = RetrofitClienteInstance.getRetrofitPersonal().create(RequestService.class);
         RequestService login2 = RetrofitClienteInstance.getRetrofitEnterprise().create(RequestService.class);
@@ -98,7 +98,7 @@ public class ServiceList {
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
             long count = transactions.stream()
                     .map(c -> LocalDateTime.parse(c.getCreated(), formatter).toLocalDate().getMonth())
-                    .filter((c) -> c.equals(LocalDateTime.now().getMonth()))
+                    .filter(c -> c.equals(LocalDateTime.now().getMonth()))
                     .count();
 
             return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) && productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -22,7 +21,7 @@ public class DemoController {
 
         BalanceResponse balanceResponse = new BalanceResponse();
 
-        ProductResponse productResponse = service.Validator(dni, productRequest.getIdaccount(), productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(dni, productRequest.getIdaccount(), productRequest.getClienttype());
 
         balanceResponse.setBalance(productResponse.getBalance());
 
@@ -34,7 +33,7 @@ public class DemoController {
     @GetMapping("/Transaction/{idaccount}")
     public List<TransactionResponse> getTransaction(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
 
         return service.getTransaction(productResponse.getIdaccount());
     }
@@ -42,7 +41,7 @@ public class DemoController {
     @RequestMapping("/Product/{idaccount}")
     public TransactionResponse postTransaction(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
 
         return service.transactionValidator(productRequest, productResponse);
     }
@@ -50,7 +49,7 @@ public class DemoController {
     @RequestMapping("/Transfer/{idaccount}")
     public TransactionResponse postTransfer(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
         ProductResponse productResponse2 = service.accountValidator(productRequest.getAccounttransfer());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
@@ -97,7 +96,7 @@ public class DemoController {
     @RequestMapping("/Transfer/Cards/{idaccount}")
     public TransactionResponse postTransfer2(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service.Validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
+        ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
         CardResponse cardResponse = service2.cardValidator(productRequest.getAccounttransfer());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
@@ -133,15 +132,11 @@ public class DemoController {
     public TransactionResponse getyankitransaction(@PathVariable("cellphone") String cellphone, @RequestBody ProductRequest productRequest) throws IOException {
 
         YankiResponse yankiResponse = service.yankiValidator(cellphone);
-        System.out.println(yankiResponse.getDebitcard());
         DebitcardResponse debitcardResponse = service2.getdebitcard(yankiResponse.getDebitcard());
         ProductResponse productResponse = service.accountValidator(debitcardResponse.getPrincipalaccount());
 
-        if (Objects.equals(productRequest.getIdclient(), yankiResponse.getIdentification())) {
+        return service.transactionValidator(productRequest, productResponse);
 
-            return service.transactionValidator(productRequest, productResponse);
-        }
-        else return null;
     }
 
 }

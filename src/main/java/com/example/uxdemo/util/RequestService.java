@@ -4,7 +4,6 @@ import com.example.uxdemo.entity.*;
 import retrofit2.Call;
 import retrofit2.http.*;
 import java.util.List;
-
 public interface RequestService {
 
         @GET("/product/Products/Idaccounts/{idaccount}")
@@ -37,7 +36,7 @@ public interface RequestService {
         @PATCH("/card/Debit/{idcard}")
         Call<DebitcardResponse> debitcardupdate(@Path("idcard") String idcard, @Body Account account);
 
-        @GET("/Yanki/{cellphone}")
+        @GET("/yanki/Yanki/{cellphone}")
         Call<YankiResponse> yankirequest(@Path("cellphone") String cellphone);
 
 }

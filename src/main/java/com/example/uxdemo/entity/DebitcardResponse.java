@@ -1,7 +1,6 @@
 package com.example.uxdemo.entity;
 
 import lombok.Data;
-
 import java.util.List;
 
 @Data

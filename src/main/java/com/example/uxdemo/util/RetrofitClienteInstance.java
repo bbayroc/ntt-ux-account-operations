@@ -13,20 +13,22 @@ public class RetrofitClienteInstance {
     private static Retrofit retrofit4;
     private static Retrofit retrofit5;
     private static Retrofit retrofit6;
-    private static String TRANSACTION = "Http://localhost:8040";
+
+    private static final String DATEFORMAT = "yyyy-MM-dd HH:mm:ss" ;
+    private static final String TRANSACTION = "Http://localhost:8040";
     private static String PERSONAL = "Http://localhost:8040";
     private static String ENTERPRISE = "Http://localhost:8040";
     private static String PRODUCT = "Http://localhost:8040";
 
     private static String CARD = "Http://localhost:8040";
 
-    private static String YANKI = "Http://localhost:8086";
+    private static String YANKI = "Http://localhost:8040";
 
     public static Retrofit getRetrofitTransaction() {
 
         Gson gson = new GsonBuilder()
                 .setLenient()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .setDateFormat(DATEFORMAT)
                 .create();
 
         if (retrofit == null) {
@@ -42,7 +44,7 @@ public class RetrofitClienteInstance {
 
         Gson gson = new GsonBuilder()
                 .setLenient()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .setDateFormat(DATEFORMAT)
                 .create();
 
         if (retrofit2 == null) {
@@ -58,7 +60,7 @@ public class RetrofitClienteInstance {
 
         Gson gson = new GsonBuilder()
                 .setLenient()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .setDateFormat(DATEFORMAT)
                 .create();
 
         if (retrofit3 == null) {
@@ -74,7 +76,7 @@ public class RetrofitClienteInstance {
 
         Gson gson = new GsonBuilder()
                 .setLenient()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .setDateFormat(DATEFORMAT)
                 .create();
 
         if (retrofit4 == null) {
@@ -90,7 +92,7 @@ public class RetrofitClienteInstance {
 
         Gson gson = new GsonBuilder()
                 .setLenient()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .setDateFormat(DATEFORMAT)
                 .create();
 
         if (retrofit5 == null) {
@@ -106,7 +108,7 @@ public class RetrofitClienteInstance {
 
         Gson gson = new GsonBuilder()
                 .setLenient()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .setDateFormat(DATEFORMAT)
                 .create();
 
         if (retrofit6 == null) {

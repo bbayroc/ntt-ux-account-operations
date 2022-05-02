@@ -28,7 +28,7 @@ public class DemoCardController {
 
         if (Objects.equals(cardRequest.getCardtype(), "Credit")) {
 
-            CardResponse cardResponse = service.Validator(dni, cardRequest.getIdcard(), cardRequest.getClienttype());
+            CardResponse cardResponse = service.validator(dni, cardRequest.getIdcard(), cardRequest.getClienttype());
 
             balanceResponse.setBalance(cardResponse.getBalance());
 
@@ -36,7 +36,7 @@ public class DemoCardController {
 
         } else if (Objects.equals(cardRequest.getCardtype(), "Debit")) {
 
-            ProductResponse productResponse = service2.Validator(dni, cardRequest.getIdaccount(), cardRequest.getClienttype());
+            ProductResponse productResponse = service2.validator(dni, cardRequest.getIdaccount(), cardRequest.getClienttype());
 
             balanceResponse.setBalance(productResponse.getBalance());
 
@@ -54,7 +54,7 @@ public class DemoCardController {
     }
 
     @PatchMapping("/Debit/{idcard}")
-    public DebitcardResponse UpdateDebitCard(@PathVariable String idcard, @RequestBody Account account) throws IOException {
+    public DebitcardResponse updateDebitCard(@PathVariable String idcard, @RequestBody Account account) throws IOException {
 
         return service.updatedebitcard(idcard, account);
     }
@@ -62,7 +62,7 @@ public class DemoCardController {
     @GetMapping("/Transaction/{idcard}")
     public List<TransactionResponse> getTransaction(@PathVariable("idcard") String idcard, @RequestBody CardRequest cardRequest) throws IOException {
 
-        CardResponse cardResponse = service.Validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
+        CardResponse cardResponse = service.validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
 
         return service.getTransaction(cardResponse.getIdcard());
     }
@@ -70,7 +70,7 @@ public class DemoCardController {
     @RequestMapping("/Card/{idcard}")
     public TransactionResponse postTransaction(@PathVariable("idcard") String idcard, @RequestBody CardRequest cardRequest) throws IOException {
 
-        CardResponse cardResponse = service.Validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
+        CardResponse cardResponse = service.validator(cardRequest.getIdclient(), idcard, cardRequest.getClienttype());
 
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
@@ -93,7 +93,7 @@ public class DemoCardController {
     @RequestMapping("/DebitCard/{idcard}")
     public TransactionResponse postDebitTransaction(@PathVariable("idcard") String idcard, @RequestBody ProductRequest productRequest) throws IOException {
 
-        ProductResponse productResponse = service2.Validator(productRequest.getIdclient(), productRequest.getIdaccount(), productRequest.getClienttype());
+        ProductResponse productResponse = service2.validator(productRequest.getIdclient(), productRequest.getIdaccount(), productRequest.getClienttype());
 
         TransactionResponse transactionResponse = service2.transactionValidator(productRequest, productResponse);
 
@@ -104,7 +104,6 @@ public class DemoCardController {
             List<Account> accounts = debitcardResponse.getAccount().stream().sorted(Comparator.comparing(Account::getAdded)).collect(Collectors.toList());
 
             for (Account account : accounts) {
-                // String idaccount = accounts.get(i).getIdaccount();
                 productResponse = service2.accountValidator(account.getIdaccount());
                 transactionResponse = service2.transactionValidator(productRequest, productResponse);
                 if (transactionResponse != null) {

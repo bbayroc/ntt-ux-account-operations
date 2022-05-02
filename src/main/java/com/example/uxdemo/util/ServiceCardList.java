@@ -10,7 +10,7 @@ import java.util.Objects;
 @Service
 public class ServiceCardList {
 
-    public CardResponse Validator(String dni, String idcard, String clienttype) throws IOException {
+    public CardResponse validator(String dni, String idcard, String clienttype) throws IOException {
 
         RequestService login = RetrofitClienteInstance.getRetrofitPersonal().create(RequestService.class);
         RequestService login2 = RetrofitClienteInstance.getRetrofitEnterprise().create(RequestService.class);
