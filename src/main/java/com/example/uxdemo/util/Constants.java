@@ -8,4 +8,6 @@ public class Constants {
     public static String PRODUCT_URL = "http://localhost:8040";
     public static String CARD_URL = "http://localhost:8040";
 
+    public static String YANKI_URL = "http://localhost:8040";
+
 }

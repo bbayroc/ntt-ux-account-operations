@@ -80,4 +80,16 @@ public class RetrofitClientConfiguration {
                 .build()
                 .create(CardsService.class);
     }
+
+    @Bean
+    YankiService yankiService() {
+        return new Retrofit.Builder()
+                .baseUrl(YANKI_URL)
+                .client(httpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(CircuitBreakerCallAdapter.of(circuitBreakerRest))
+                .build()
+                .create(YankiService.class);
+    }
+
 }

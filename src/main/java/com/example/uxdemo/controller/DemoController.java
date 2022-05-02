@@ -1,5 +1,6 @@
 package com.example.uxdemo.controller;
 
+import com.example.uxdemo.business.ServiceCardList;
 import com.example.uxdemo.business.ServiceList;
 import com.example.uxdemo.model.BalanceResponse;
 import com.example.uxdemo.model.BalanceUpdate;
@@ -7,7 +8,6 @@ import com.example.uxdemo.model.cards.CardResponse;
 import com.example.uxdemo.model.products.ProductRequest;
 import com.example.uxdemo.model.products.ProductResponse;
 import com.example.uxdemo.model.transactions.TransactionResponse;
-import com.example.uxdemo.util.ServiceCardList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

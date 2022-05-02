@@ -1,4 +1,4 @@
-package com.example.uxdemo.model;
+package com.example.uxdemo.model.yanki;
 
 import lombok.Data;
 
@@ -7,7 +7,11 @@ public class YankiResponse {
 
     private long id;
     private String identification;
+    private String cellphone;
     private String imei;
     private String email;
     private String debitcard;
+    private double balance;
+    private String currency;
+
 }
