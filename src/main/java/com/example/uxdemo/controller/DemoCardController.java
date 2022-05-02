@@ -12,7 +12,6 @@ import com.example.uxdemo.model.products.ProductResponse;
 import com.example.uxdemo.model.transactions.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -45,7 +44,11 @@ public class DemoCardController {
         }
         else if (Objects.equals(cardRequest.getCardtype(), "Debit")) {
 
-            ProductResponse productResponse = service2.Validator(dni, cardRequest.getIdaccount(), cardRequest.getClienttype());
+            DebitcardResponse debitcardResponse = service.getdebitcard(cardRequest.getIdcard());
+
+            //ProductResponse productResponse = service2.Validator(dni, debitcardResponse.getPrincipalaccount(), cardRequest.getClienttype());
+
+            ProductResponse productResponse = service2.accountValidator(debitcardResponse.getPrincipalaccount());
 
             balanceResponse.setBalance(productResponse.getBalance());
 
@@ -115,7 +118,6 @@ public class DemoCardController {
             List<Account> accounts = debitcardResponse.getAccount().stream().sorted(Comparator.comparing(Account::getAdded)).collect(Collectors.toList());
 
             for (int i = 0; i < accounts.size(); i++) {
-                // String idaccount = accounts.get(i).getIdaccount();
                 productResponse = service2.accountValidator(accounts.get(i).getIdaccount());
                 transactionResponse = service2.transactionValidator(productRequest, productResponse);
                 if (transactionResponse != null) {
