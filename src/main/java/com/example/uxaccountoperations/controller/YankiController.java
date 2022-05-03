@@ -4,6 +4,7 @@ import com.example.uxaccountoperations.business.ServiceYankiList;
 import com.example.uxaccountoperations.model.BalanceResponse;
 import com.example.uxaccountoperations.model.yanki.YankiRequest;
 import com.example.uxaccountoperations.model.yanki.YankiResponse;
+import com.example.uxaccountoperations.model.yanki.YankiTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ public class YankiController {
             balanceResponse.setCurrency(yankiResponse.getCurrency());
 
             return balanceResponse;
+
         } else return null;
     }
 
@@ -46,4 +48,31 @@ public class YankiController {
         } else return null;
 
     }
-}
+
+    @RequestMapping("/transaction/{cellphone}")
+    public YankiTransaction transaction(@PathVariable String cellphone, @RequestBody YankiTransaction yankiTransaction) throws IOException {
+
+        YankiResponse sender = service.validatorcellphone(cellphone);
+        YankiResponse recipient = service.validatorcellphone(yankiTransaction.getRecipient());
+
+        if (sender.getDebitcard() == null || recipient.getDebitcard() == null) {
+
+            return null;
+
+        } else {
+            YankiTransaction yankiTransaction2 = service.transaction(cellphone, yankiTransaction);
+
+            return yankiTransaction2;
+        }
+
+    }
+    @GetMapping("/transaction2/{cellphone}")
+    public YankiResponse transaction2(@PathVariable String cellphone) throws IOException {
+
+        YankiResponse yankiResponse = service.validatorcellphone(cellphone);
+
+        return yankiResponse;
+    }
+
+    }
+
