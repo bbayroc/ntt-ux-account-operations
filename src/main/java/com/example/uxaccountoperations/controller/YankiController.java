@@ -1,9 +1,6 @@
 package com.example.uxaccountoperations.controller;
 
-import com.example.uxaccountoperations.business.ServiceCardList;
-import com.example.uxaccountoperations.business.ServiceList;
-import com.example.uxaccountoperations.business.ServiceTransfer;
-import com.example.uxaccountoperations.business.ServiceYankiList;
+import com.example.uxaccountoperations.business.*;
 import com.example.uxaccountoperations.model.BalanceResponse;
 import com.example.uxaccountoperations.model.cards.CardResponse;
 import com.example.uxaccountoperations.model.cards.DebitcardResponse;
@@ -36,6 +33,9 @@ public class YankiController {
 
     @Autowired
     CardsService cardservice;
+
+    @Autowired
+    ServiceKafka serviceKafka;
 
     @GetMapping("/balance/{identification}")
     public BalanceResponse getBalance(@PathVariable("identification") String identification, @RequestBody String cellphone) throws IOException {
@@ -90,7 +90,7 @@ public class YankiController {
             productRequest.setTransactiontype("Retiro");
             productRequest.setAmount(-yankiTransaction.getAmount());
 
-            servicelist.transactionValidator(productRequest, productResponse);
+            serviceKafka.transactionValidator(productRequest, productResponse);
 
             return service.transaction(cellphone, yankiTransaction);
 
@@ -112,7 +112,7 @@ public class YankiController {
             productRequest.setTransactiontype("Deposito");
             productRequest.setAmount(yankiTransaction.getAmount());
 
-            servicelist.transactionValidator(productRequest, productResponse);
+            serviceKafka.transactionValidator(productRequest, productResponse);
 
             return service.transaction(cellphone, yankiTransaction);
 
@@ -134,7 +134,7 @@ public class YankiController {
             productRequest.setTransactiontype("Retiro");
             productRequest.setAmount(-yankiTransaction.getAmount());
 
-            servicelist.transactionValidator(productRequest, productSender);
+            serviceKafka.transactionValidator(productRequest, productSender);
 
             Call<DebitcardResponse> call4 = cardservice.debitcardrequest(recipient.getDebitcard());
 
@@ -150,7 +150,7 @@ public class YankiController {
             productRequest2.setTransactiontype("Deposito");
             productRequest2.setAmount(yankiTransaction.getAmount());
 
-            servicelist.transactionValidator(productRequest2, productRecipient);
+            serviceKafka.transactionValidator(productRequest2, productRecipient);
 
             return service.transaction(cellphone, yankiTransaction);
 

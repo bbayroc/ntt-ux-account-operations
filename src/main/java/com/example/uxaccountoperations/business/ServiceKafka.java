@@ -1,7 +1,8 @@
 package com.example.uxaccountoperations.business;
 
-import com.example.uxaccountoperations.model.BalanceUpdate;
-import com.example.uxaccountoperations.model.TransactionEvent;
+import com.example.uxaccountoperations.infraestructure.events.BalanceUpdate;
+import com.example.uxaccountoperations.infraestructure.events.TransactionEvent;
+import com.example.uxaccountoperations.infraestructure.producer.TransactionEventProducer;
 import com.example.uxaccountoperations.model.products.ProductRequest;
 import com.example.uxaccountoperations.model.products.ProductResponse;
 import com.example.uxaccountoperations.model.transactions.TransactionRequest;
@@ -9,6 +10,7 @@ import com.example.uxaccountoperations.model.transactions.TransactionResponse;
 import com.example.uxaccountoperations.web.ProductsService;
 import com.example.uxaccountoperations.web.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import retrofit2.Call;
 
 import java.io.IOException;
@@ -18,14 +20,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@Service
 public class ServiceKafka {
-
 
     @Autowired
     private ProductsService productsService;
 
     @Autowired
     private TransactionsService transactionsService;
+
+    @Autowired
+    private TransactionEventProducer transactionEventProducer;
 
     public TransactionResponse transactionValidator(ProductRequest productRequest, ProductResponse productResponse) throws IOException {
 
@@ -57,21 +62,18 @@ public class ServiceKafka {
         transactionEvent.setTransactiontype(productRequest.getTransactiontype());
         transactionEvent.setAmount(productRequest.getAmount());
         transactionEvent.setAppliedcomission(productRequest.getAppliedcomision());
-
+/*
         transactionRequest.setIdaccount(productResponse.getIdaccount());
         transactionRequest.setTransactiontype(productRequest.getTransactiontype());
         transactionRequest.setAmount(productRequest.getAmount());
         transactionRequest.setAppliedcomission(productRequest.getAppliedcomision());
 
         Call<ProductResponse> call6 = productsService.produpdate(transactionRequest.getIdaccount(), balanceUpdate);
-
         call6.execute().body();
-
-
-
         Call<TransactionResponse> call5 = transactionsService.trancreate(transactionRequest);
-
         call5.execute().body();
+ */
+        transactionEventProducer.produce("TransferEvent", transactionEvent);
 
         return null;
     }
@@ -85,8 +87,7 @@ public class ServiceKafka {
 
         if (productResponse.getMovementlimit() > 0) {
 
-            Call<List<TransactionResponse>> call4 = transactionsService.tranrequest(idaccount);
-            List<TransactionResponse> transactions = call4.execute().body();
+            List<TransactionResponse> transactions = getTransaction(idaccount);
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
             long count = transactions.stream()
                     .map(c -> LocalDateTime.parse(c.getCreated(), formatter).toLocalDate().getMonth())
@@ -101,18 +102,12 @@ public class ServiceKafka {
         }
     }
 
-    public TransactionResponse postTransaction(ProductRequest productRequest, String idaccount) throws IOException {
+    public List<TransactionResponse> getTransaction(String idaccount) throws IOException {
 
-        TransactionRequest transactionRequest = new TransactionRequest();
+        Call<List<TransactionResponse>> call4 = transactionsService.tranrequest(idaccount);
 
-        transactionRequest.setIdaccount(idaccount);
-        transactionRequest.setTransactiontype(productRequest.getTransactiontype());
-        transactionRequest.setAmount(productRequest.getAmount());
-        transactionRequest.setAppliedcomission(productRequest.getAppliedcomision());
+        return call4.execute().body();
 
-        Call<TransactionResponse> call5 = transactionsService.trancreate(transactionRequest);
-
-        return call5.execute().body();
     }
 
 }

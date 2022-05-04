@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  personalapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8070:8070
+    networks:
+      - default
+      - nttdata-net
+networks:
+  default: 
+    driver: bridge
+  nttdata-net:
+    external: true
+
