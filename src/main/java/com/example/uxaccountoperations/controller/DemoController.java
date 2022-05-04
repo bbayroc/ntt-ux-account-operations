@@ -10,10 +10,14 @@ import com.example.uxaccountoperations.model.products.ProductRequest;
 import com.example.uxaccountoperations.model.products.ProductResponse;
 import com.example.uxaccountoperations.model.transactions.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 public class DemoController {
@@ -42,7 +46,8 @@ public class DemoController {
     }
 
     @GetMapping("/transaction/{idaccount}")
-    public List<TransactionResponse> getTransaction(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest) throws IOException {
+    public List<TransactionResponse> getTransaction(@PathVariable("idaccount") String idaccount, @RequestBody ProductRequest productRequest)
+            throws IOException {
 
         ProductResponse productResponse = service.validator(productRequest.getIdclient(), idaccount, productRequest.getClienttype());
 

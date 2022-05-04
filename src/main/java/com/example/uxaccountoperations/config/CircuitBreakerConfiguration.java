@@ -13,10 +13,8 @@ public class CircuitBreakerConfiguration {
 
     @Bean
     CircuitBreaker circuitBreaker() {
-        CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
-                .failureRateThreshold(50) // ratio de fallas umbral
-                .waitDurationInOpenState(Duration.ofMillis(10000))
-                .permittedNumberOfCallsInHalfOpenState(1) // llamadas permitidas semi abierto
+        CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom().failureRateThreshold(50) // ratio de fallas umbral
+                .waitDurationInOpenState(Duration.ofMillis(10000)).permittedNumberOfCallsInHalfOpenState(1) // llamadas permitidas semi abierto
                 .slidingWindowSize(3) // ventana de llamadas para medir el umbral
                 .build();
 

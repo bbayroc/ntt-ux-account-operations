@@ -12,7 +12,12 @@ import com.example.uxaccountoperations.model.products.ProductRequest;
 import com.example.uxaccountoperations.model.products.ProductResponse;
 import com.example.uxaccountoperations.model.transactions.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -69,7 +74,7 @@ public class DemoCardController {
     }
 
     @PatchMapping("/debit/{idcard}")
-    public DebitcardResponse UpdateDebitCard(@PathVariable String idcard, @RequestBody Account account) throws IOException {
+    public DebitcardResponse updateDebitCard(@PathVariable String idcard, @RequestBody Account account) throws IOException {
 
         return service.updatedebitcard(idcard, account);
     }
@@ -90,7 +95,8 @@ public class DemoCardController {
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
         //Valida la cuenta y que los retiros sean numeros negativos
-        if (cardResponse == null || (Objects.equals(cardRequest.getTransactiontype(), "Consumo") && cardRequest.getAmount() >= 0) || (Objects.equals(cardRequest.getTransactiontype(), "Pago") && cardRequest.getAmount() <= 0)) {
+        if (cardResponse == null || (Objects.equals(cardRequest.getTransactiontype(), "Consumo") && cardRequest.getAmount() >= 0) ||
+                (Objects.equals(cardRequest.getTransactiontype(), "Pago") && cardRequest.getAmount() <= 0)) {
             return null;
         }
         else

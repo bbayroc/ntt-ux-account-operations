@@ -1,18 +1,24 @@
 package com.example.uxaccountoperations.controller;
 
-import com.example.uxaccountoperations.business.*;
+import com.example.uxaccountoperations.business.ServiceKafka;
+import com.example.uxaccountoperations.business.ServiceList;
+import com.example.uxaccountoperations.business.ServiceTransfer;
+import com.example.uxaccountoperations.business.ServiceYankiList;
 import com.example.uxaccountoperations.model.BalanceResponse;
-import com.example.uxaccountoperations.model.cards.CardResponse;
 import com.example.uxaccountoperations.model.cards.DebitcardResponse;
 import com.example.uxaccountoperations.model.products.ProductRequest;
 import com.example.uxaccountoperations.model.products.ProductResponse;
-import com.example.uxaccountoperations.model.transactions.TransactionResponse;
 import com.example.uxaccountoperations.model.yanki.YankiRequest;
 import com.example.uxaccountoperations.model.yanki.YankiResponse;
 import com.example.uxaccountoperations.model.yanki.YankiTransaction;
 import com.example.uxaccountoperations.web.CardsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import retrofit2.Call;
 
 import java.io.IOException;
@@ -52,7 +58,10 @@ public class YankiController {
 
             return balanceResponse;
 
-        } else return null;
+        }
+        else {
+            return null;
+        }
     }
 
     @PatchMapping("/update/{identification}")
@@ -64,7 +73,10 @@ public class YankiController {
 
             return service.update(identification, yankirequest);
 
-        } else return null;
+        }
+        else {
+            return null;
+        }
 
     }
 
@@ -80,7 +92,8 @@ public class YankiController {
 
             DebitcardResponse debitcardResponse = call1.execute().body();
 
-            ProductResponse productResponse = servicelist.validator(debitcardResponse.getIdclient(), debitcardResponse.getPrincipalaccount(), debitcardResponse.getClienttype());
+            ProductResponse productResponse =
+                    servicelist.validator(debitcardResponse.getIdclient(), debitcardResponse.getPrincipalaccount(), debitcardResponse.getClienttype());
 
             ProductRequest productRequest = new ProductRequest();
 
@@ -102,7 +115,8 @@ public class YankiController {
 
             DebitcardResponse debitcardResponse = call2.execute().body();
 
-            ProductResponse productResponse = servicelist.validator(debitcardResponse.getIdclient(), debitcardResponse.getPrincipalaccount(), debitcardResponse.getClienttype());
+            ProductResponse productResponse =
+                    servicelist.validator(debitcardResponse.getIdclient(), debitcardResponse.getPrincipalaccount(), debitcardResponse.getClienttype());
 
             ProductRequest productRequest = new ProductRequest();
 
@@ -124,7 +138,8 @@ public class YankiController {
 
             DebitcardResponse debitcardSender = call3.execute().body();
 
-            ProductResponse productSender = servicelist.validator(debitcardSender.getIdclient(), debitcardSender.getPrincipalaccount(), debitcardSender.getClienttype());
+            ProductResponse productSender =
+                    servicelist.validator(debitcardSender.getIdclient(), debitcardSender.getPrincipalaccount(), debitcardSender.getClienttype());
 
             ProductRequest productRequest = new ProductRequest();
 
@@ -140,7 +155,8 @@ public class YankiController {
 
             DebitcardResponse debitcardRecipient = call4.execute().body();
 
-            ProductResponse productRecipient = servicelist.validator(debitcardRecipient.getIdclient(), debitcardRecipient.getPrincipalaccount(), debitcardRecipient.getClienttype());
+            ProductResponse productRecipient =
+                    servicelist.validator(debitcardRecipient.getIdclient(), debitcardRecipient.getPrincipalaccount(), debitcardRecipient.getClienttype());
 
             ProductRequest productRequest2 = new ProductRequest();
 
@@ -189,5 +205,5 @@ public class YankiController {
 
     }
 
-    }
+}
 

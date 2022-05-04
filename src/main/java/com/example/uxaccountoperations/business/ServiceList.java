@@ -1,13 +1,17 @@
 package com.example.uxaccountoperations.business;
 
-import com.example.uxaccountoperations.model.*;
+import com.example.uxaccountoperations.model.BalanceUpdate;
 import com.example.uxaccountoperations.model.enterprises.EnterpriseResponse;
 import com.example.uxaccountoperations.model.persons.PersonalResponse;
 import com.example.uxaccountoperations.model.products.ProductRequest;
 import com.example.uxaccountoperations.model.products.ProductResponse;
 import com.example.uxaccountoperations.model.transactions.TransactionRequest;
 import com.example.uxaccountoperations.model.transactions.TransactionResponse;
-import com.example.uxaccountoperations.web.*;
+import com.example.uxaccountoperations.web.CardsService;
+import com.example.uxaccountoperations.web.EnterprisesService;
+import com.example.uxaccountoperations.web.PersonsService;
+import com.example.uxaccountoperations.web.ProductsService;
+import com.example.uxaccountoperations.web.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
@@ -49,7 +53,8 @@ public class ServiceList {
 
         if (Objects.equals(clienttype, "Personal")) {
             personalResponse = call.execute().body();
-        } else if (Objects.equals(clienttype, "Enterprise")) {
+        }
+        else if (Objects.equals(clienttype, "Enterprise")) {
             enterpriseResponse = call2.execute().body();
         }
 
@@ -110,7 +115,8 @@ public class ServiceList {
                     .filter(c -> c.equals(LocalDateTime.now().getMonth()))
                     .count();
 
-            return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) && productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());
+            return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) &&
+                    productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());
 
         }
         else {
@@ -129,12 +135,14 @@ public class ServiceList {
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
         //Valida la cuenta y que los retiros sean numeros negativos
-        if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0)) {
+        if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) ||
+                (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0)) {
             return null;
         }
         else
             //Valida que el retiro no sea mayor al balance
-            if ((productResponse.getBalance() + productRequest.getAmount()) < 0 || (limitValidator(productResponse.getIdaccount()) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype()))) {
+            if ((productResponse.getBalance() + productRequest.getAmount()) < 0 ||
+                    (limitValidator(productResponse.getIdaccount()) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype()))) {
                 return null;
             }
             else {

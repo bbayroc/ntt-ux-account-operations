@@ -37,7 +37,9 @@ public class ProductController {
 
             return productResponse;
         }
-        else return null;
+        else {
+            return null;
+        }
     }
 
 }

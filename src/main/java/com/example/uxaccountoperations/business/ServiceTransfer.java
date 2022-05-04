@@ -28,7 +28,9 @@ public class ServiceTransfer {
         balanceUpdate2.setBalance(productRequest.getAmount());
 
         //Valida que la operacion se pueda realizar
-        if (productResponse == null || (productRequest.getAmount()) < 0 || productResponse.getBalance() - productRequest.getAmount() < 0 || (service.limitValidator(idaccount) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype())) || (service.limitValidator(productRequest.getAccounttransfer()) && !Set.of("PYME", "VIP").contains(productResponse2.getAccounttype()))) {
+        if (productResponse == null || (productRequest.getAmount()) < 0 || productResponse.getBalance() - productRequest.getAmount() < 0 ||
+                (service.limitValidator(idaccount) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype())) ||
+                (service.limitValidator(productRequest.getAccounttransfer()) && !Set.of("PYME", "VIP").contains(productResponse2.getAccounttype()))) {
             return null;
         }
 
@@ -58,7 +60,8 @@ public class ServiceTransfer {
 
             return service.postTransaction(productRequest, idaccount);
 
-        } else {
+        }
+        else {
             return null;
         }
 

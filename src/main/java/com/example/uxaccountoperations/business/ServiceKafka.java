@@ -37,12 +37,14 @@ public class ServiceKafka {
         BalanceUpdate balanceUpdate = new BalanceUpdate();
 
         //Valida la cuenta y que los retiros sean numeros negativos
-        if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) || (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0)) {
+        if (productResponse == null || (Objects.equals(productRequest.getTransactiontype(), "Retiro") && productRequest.getAmount() >= 0) ||
+                (Objects.equals(productRequest.getTransactiontype(), "Deposito") && productRequest.getAmount() <= 0)) {
             return null;
         }
         else
             //Valida que el retiro no sea mayor al balance
-            if ((productResponse.getBalance() + productRequest.getAmount()) < 0 || (limitValidator(productResponse.getIdaccount()) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype()))) {
+            if ((productResponse.getBalance() + productRequest.getAmount()) < 0 ||
+                    (limitValidator(productResponse.getIdaccount()) && !Set.of("PYME", "VIP").contains(productResponse.getAccounttype()))) {
                 return null;
             }
             else {
@@ -89,12 +91,11 @@ public class ServiceKafka {
 
             List<TransactionResponse> transactions = getTransaction(idaccount);
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            long count = transactions.stream()
-                    .map(c -> LocalDateTime.parse(c.getCreated(), formatter).toLocalDate().getMonth())
-                    .filter(c -> c.equals(LocalDateTime.now().getMonth()))
-                    .count();
+            long count = transactions.stream().map(c -> LocalDateTime.parse(c.getCreated(), formatter).toLocalDate().getMonth())
+                    .filter(c -> c.equals(LocalDateTime.now().getMonth())).count();
 
-            return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) && productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());
+            return (count >= productResponse.getMovementlimit() || (Objects.equals(productResponse.getAccounttype(), "Plazo Fijo")) &&
+                    productResponse.getUniquedayofmovement() != LocalDateTime.now().getDayOfMonth());
 
         }
         else {

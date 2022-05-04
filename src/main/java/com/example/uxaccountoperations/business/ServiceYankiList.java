@@ -16,6 +16,7 @@ public class ServiceYankiList {
 
     @Autowired
     private YankiService yankiService;
+
     public YankiResponse validator(String identification) throws IOException {
 
         Call<YankiResponse> call1 = yankiService.yankirequest(identification);
