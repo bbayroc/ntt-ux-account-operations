@@ -97,6 +97,7 @@ public class ServiceCardList {
     public DebitcardResponse getdebitcard(String idcard) throws IOException {
 
         Call<DebitcardResponse> call10 = cardsService.debitcardrequest(idcard);
+
         return call10.execute().body();
     }
 

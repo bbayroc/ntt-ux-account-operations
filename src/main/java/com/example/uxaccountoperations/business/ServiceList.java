@@ -37,7 +37,7 @@ public class ServiceList {
     @Autowired
     private ProductsService productsService;
 
-    public ProductResponse validator(String dni, String idaccount, String idclient) throws IOException {
+    public ProductResponse validator(String dni, String idaccount, String clienttype) throws IOException {
 
         Call<PersonalResponse> call = personsService.persrequest(dni);
         Call<EnterpriseResponse> call2 = enterprisesService.enterequest(dni);
@@ -47,9 +47,9 @@ public class ServiceList {
         PersonalResponse personalResponse = new PersonalResponse();
         EnterpriseResponse enterpriseResponse = new EnterpriseResponse();
 
-        if (Objects.equals(idclient, "Personal")) {
+        if (Objects.equals(clienttype, "Personal")) {
             personalResponse = call.execute().body();
-        } else if (Objects.equals(idclient, "Enterprise")) {
+        } else if (Objects.equals(clienttype, "Enterprise")) {
             enterpriseResponse = call2.execute().body();
         }
 
@@ -70,6 +70,7 @@ public class ServiceList {
     public List<TransactionResponse> getTransaction(String idaccount) throws IOException {
 
         Call<List<TransactionResponse>> call4 = transactionsService.tranrequest(idaccount);
+
         return call4.execute().body();
 
     }
@@ -84,6 +85,7 @@ public class ServiceList {
         transactionRequest.setAppliedcomission(productRequest.getAppliedcomision());
 
         Call<TransactionResponse> call5 = transactionsService.trancreate(transactionRequest);
+
         return call5.execute().body();
     }
 

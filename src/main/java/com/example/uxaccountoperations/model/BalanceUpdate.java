@@ -5,4 +5,5 @@ import lombok.Data;
 public class BalanceUpdate {
 
     private double balance;
+
 }
